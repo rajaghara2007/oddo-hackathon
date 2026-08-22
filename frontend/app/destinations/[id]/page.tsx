@@ -176,9 +176,9 @@ export default function DestinationDetailsPage() {
           {/* Large card - spans 2 rows */}
           <motion.div
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 md:row-span-2 min-h-[280px]"
+            className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 md:row-span-2 min-h-[400px] md:min-h-[500px]"
           >
-            <img src={LANDMARKS[0].img} alt={LANDMARKS[0].name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
+            <img src={LANDMARKS[0].img} alt={LANDMARKS[0].name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/95 via-[#0B0F19]/20 to-transparent" />
             <div className="absolute bottom-7 left-7 right-7">
               <span className="text-[9px] font-bold tracking-widest uppercase text-orange-400 mb-2 block">{LANDMARKS[0].type}</span>
@@ -192,9 +192,9 @@ export default function DestinationDetailsPage() {
             <motion.div
               key={lm.id}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i + 1) * 0.1 }}
-              className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 min-h-[160px] md:min-h-[180px]"
+              className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 min-h-[240px]"
             >
-              <img src={lm.img} alt={lm.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
+              <img src={lm.img} alt={lm.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/95 via-[#0B0F19]/20 to-transparent" />
               <div className="absolute bottom-5 left-5 right-5">
                 <span className="text-[9px] font-bold tracking-widest uppercase text-orange-400 mb-1.5 block">{lm.type}</span>
