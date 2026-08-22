@@ -54,6 +54,7 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
         {signedIn ? (
           <div className="hidden md:flex items-center bg-[#1E293B]/80 backdrop-blur-md p-1 rounded-full border border-indigo-500/20">
             <PillLink href="/dashboard" active={pathname === "/dashboard"}>My Trips</PillLink>
+            <PillLink href="/wishlist" active={pathname === "/wishlist"}>✨ Wishlist</PillLink>
             <PillLink href="/travel-dna" active={pathname === "/travel-dna"}>🧬 DNA</PillLink>
             <PillLink href="/passport" active={pathname === "/passport"}>🛂 Passport</PillLink>
             <PillLink href="/guardian" active={pathname === "/guardian"}>🛡️ Guardian</PillLink>
