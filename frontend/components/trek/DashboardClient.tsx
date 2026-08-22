@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Clock, Sparkles, Trophy, ChevronRight } from "lucide-react";
-import { mockTrips } from "@/data/mockDashboard";
+import { mockTrips as fallbackTrips } from "@/data/mockDashboard";
 import TravelDNACard from "@/components/trek/TravelDNACard";
 import type { TravelDNA } from "@/data/travelDNA";
 import { MOCK_BADGES, getCurrentLevel, MOCK_PASSPORT_STATS } from "@/data/passport";
+import api from "@/lib/api";
 
 const STATUS_COLORS: Record<string, string> = {
   planned: "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30",
@@ -22,12 +23,28 @@ const COVER_IMAGES: Record<string, string> = {
 
 export default function DashboardClient() {
   const [dna, setDna] = useState<TravelDNA | null>(null);
+  const [trips, setTrips] = useState<any[]>(fallbackTrips);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("travel_dna");
       if (saved) setDna(JSON.parse(saved));
     } catch {}
+
+    const fetchTrips = async () => {
+      try {
+        const { data } = await api.get("/trips");
+        if (data && data.length > 0) {
+          setTrips(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch trips", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchTrips();
   }, []);
 
   return (
@@ -183,7 +200,7 @@ export default function DashboardClient() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockTrips.map((trip, i) => (
+          {trips.map((trip, i) => (
             <motion.div key={trip.id}
               initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * i }}
               whileHover={{ y: -6 }}
@@ -206,7 +223,7 @@ export default function DashboardClient() {
                 </div>
                 <div className="flex items-center justify-between mt-4">
                   <span className="flex items-center gap-1.5 text-xs text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full font-bold">
-                    <MapPin className="w-3 h-3" /> {trip.stopCount} stops
+                    <MapPin className="w-3 h-3" /> {trip.stops?.length || 0} stops
                   </span>
                   <motion.button whileHover={{ x: 3 }} className="text-xs text-gray-400 hover:text-orange-400 transition-colors font-bold">
                     View →

@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth";
 import tripsRoutes from "./routes/trips";
 import citiesRoutes from "./routes/cities";
 import dashboardRoutes from "./routes/dashboard";
+import publicRoutes from "./routes/public";
 
 // Initialize express app
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/trips", tripsRoutes);
 app.use("/api/cities", citiesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/public", publicRoutes);
 
 // Basic health check route
 app.get("/api/health", (req: Request, res: Response) => {
