@@ -38,7 +38,7 @@ export const createTrip = async (req: AuthRequest, res: Response) => {
     res.status(201).json(trip);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+      return res.status(400).json({ error: (error as z.ZodError).errors });
     }
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -48,7 +48,7 @@ export const getTripById = async (req: AuthRequest, res: Response) => {
   try {
     const trip = await prisma.trip.findFirst({
       where: {
-        id: req.params.id,
+        id: req.params.id as string,
         OR: [
           { ownerId: req.user!.id },
           { collaborators: { some: { userId: req.user!.id } } },
@@ -81,7 +81,7 @@ export const updateTrip = async (req: AuthRequest, res: Response) => {
     // Check if user is owner or editor
     const trip = await prisma.trip.findFirst({
       where: {
-        id: req.params.id,
+        id: req.params.id as string,
         OR: [
           { ownerId: req.user!.id },
           { collaborators: { some: { userId: req.user!.id, role: { in: ["OWNER", "EDITOR"] } } } }
@@ -94,13 +94,13 @@ export const updateTrip = async (req: AuthRequest, res: Response) => {
     }
 
     const updatedTrip = await prisma.trip.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data,
     });
     res.json(updatedTrip);
   } catch (error: any) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+      return res.status(400).json({ error: (error as z.ZodError).errors });
     }
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -110,7 +110,7 @@ export const deleteTrip = async (req: AuthRequest, res: Response) => {
   try {
     // Only owner can delete
     const trip = await prisma.trip.findFirst({
-      where: { id: req.params.id, ownerId: req.user!.id },
+      where: { id: req.params.id as string, ownerId: req.user!.id },
     });
 
     if (!trip) {
@@ -118,7 +118,7 @@ export const deleteTrip = async (req: AuthRequest, res: Response) => {
     }
 
     await prisma.trip.delete({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
     res.status(204).send();
   } catch (error) {
