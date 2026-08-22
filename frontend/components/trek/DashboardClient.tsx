@@ -2,17 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Globe2, Plane, Sun, Navigation, Sparkles } from "lucide-react";
+import { MapPin, Clock, Sparkles, Trophy, ChevronRight } from "lucide-react";
 import { mockTrips } from "@/data/mockDashboard";
 import TravelDNACard from "@/components/trek/TravelDNACard";
 import type { TravelDNA } from "@/data/travelDNA";
-
-const STATS = [
-  { label: "Countries Visited", value: "12", icon: <Globe2 className="w-5 h-5" />, color: "from-indigo-500 to-purple-600" },
-  { label: "Trips Total", value: "24", icon: <Plane className="w-5 h-5" />, color: "from-orange-500 to-rose-500" },
-  { label: "Days Traveled", value: "186", icon: <Sun className="w-5 h-5" />, color: "from-emerald-500 to-teal-500" },
-  { label: "Distance Flown", value: "84k km", icon: <Navigation className="w-5 h-5" />, color: "from-sky-500 to-blue-600" },
-];
+import { MOCK_BADGES, getCurrentLevel, MOCK_PASSPORT_STATS } from "@/data/passport";
 
 const STATUS_COLORS: Record<string, string> = {
   planned: "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30",
@@ -75,24 +69,85 @@ export default function DashboardClient() {
         </div>
       </section>
 
-      {/* Stats Grid + DNA Card */}
+      {/* Achievement Progress + DNA Card */}
       <section className="max-w-[1400px] mx-auto px-6 mb-12">
         <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4">
-            {STATS.map((stat, i) => (
-              <motion.div key={stat.label}
-                initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * i }}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="bg-[#1E293B]/80 backdrop-blur-sm border border-indigo-500/20 rounded-2xl p-6 flex flex-col gap-3 shadow-lg cursor-pointer">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-md`}>
-                  {stat.icon}
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-white font-serif">{stat.value}</p>
-                  <p className="text-xs text-gray-400 mt-1 font-medium">{stat.label}</p>
-                </div>
+          {/* Achievement Widget */}
+          <div className="flex-1">
+            {/* Level Progress Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-[#1E293B]/80 backdrop-blur-sm border border-orange-500/20 rounded-2xl p-5 mb-4"
+            >
+              {(() => {
+                const { current, next, progressPct } = getCurrentLevel(MOCK_PASSPORT_STATS.totalTrips);
+                return (
+                  <>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{current.emoji}</span>
+                        <div>
+                          <p className="text-xs text-orange-400 font-bold uppercase tracking-widest">Current Level</p>
+                          <p className="text-lg font-bold text-white">{current.title}</p>
+                        </div>
+                      </div>
+                      <a href="/passport">
+                        <span className="text-xs text-gray-400 hover:text-orange-400 flex items-center gap-1 transition-colors">
+                          Full Profile <ChevronRight className="w-3.5 h-3.5" />
+                        </span>
+                      </a>
+                    </div>
+                    {next && (
+                      <>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+                          <span>{MOCK_PASSPORT_STATS.totalTrips} trips</span>
+                          <span>{next.minTrips} trips → {next.emoji} {next.title}</span>
+                        </div>
+                        <div className="h-2 bg-[#0B0F19] rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }} animate={{ width: `${progressPct}%` }} transition={{ duration: 1, delay: 0.3 }}
+                            className="h-full bg-gradient-to-r from-orange-500 to-rose-500 rounded-full"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
+            </motion.div>
+
+            {/* In-Progress Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {MOCK_BADGES.filter(b => !b.unlocked).slice(0, 3).map((badge, i) => (
+                <motion.div
+                  key={badge.id}
+                  initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + 0.1 * i }}
+                  whileHover={{ y: -3 }}
+                  className="bg-[#1E293B]/60 border border-indigo-500/15 rounded-xl p-4 cursor-pointer group hover:border-orange-500/30 transition-all"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-2xl">{badge.emoji}</span>
+                    <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">{badge.progress}/{badge.total}</span>
+                  </div>
+                  <p className="text-xs font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">{badge.name}</p>
+                  <div className="h-1.5 bg-[#0B0F19] rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
+                      style={{ width: `${(badge.progress / badge.total) * 100}%` }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <a href="/passport">
+              <motion.div
+                whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
+                className="mt-3 flex items-center justify-center gap-2 text-xs font-bold text-gray-500 hover:text-orange-400 transition-colors py-2 cursor-pointer"
+              >
+                <Trophy className="w-3.5 h-3.5" /> View all achievements in Passport
               </motion.div>
-            ))}
+            </a>
           </div>
 
           {/* Travel DNA Card */}
