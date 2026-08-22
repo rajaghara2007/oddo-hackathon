@@ -116,9 +116,11 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
               </motion.button>
 
               <IconButton icon={<Bell className="w-4 h-4" />} badge />
-              <button className="ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 border-2 border-[#1E293B] shadow-sm flex items-center justify-center text-white overflow-hidden">
-                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" className="w-full h-full object-cover" />
-              </button>
+              <a href="/passport">
+                <button className="ml-2 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 border-2 border-[#1E293B] hover:border-orange-500 transition-colors shadow-sm flex items-center justify-center text-white overflow-hidden cursor-pointer">
+                  <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile" className="w-full h-full object-cover" />
+                </button>
+              </a>
             </div>
           ) : (
             <>
