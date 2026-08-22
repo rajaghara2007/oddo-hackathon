@@ -36,10 +36,6 @@ export default function DashboardClient() {
     }
   }, [user, authLoading, router]);
 
-  if (authLoading || !user) {
-    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
-  }
-
   useEffect(() => {
     try {
       const saved = localStorage.getItem("travel_dna");
@@ -60,6 +56,10 @@ export default function DashboardClient() {
     };
     fetchTrips();
   }, []);
+
+  if (authLoading || !user) {
+    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-gray-200 pt-20 pb-24 overflow-x-hidden">

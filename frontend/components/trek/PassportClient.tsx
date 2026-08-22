@@ -27,10 +27,6 @@ export default function PassportClient() {
     }
   }, [user, authLoading, router]);
 
-  if (authLoading || !user) {
-    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
-  }
-
   const totalTrips = trips.length || MOCK_PASSPORT_STATS.totalTrips;
   const citiesVisited = trips.reduce((acc: string[], t) => {
     const cities = t.stops?.map((s: any) => s.city?.name).filter(Boolean) || [];
@@ -68,6 +64,10 @@ export default function PassportClient() {
   const mapCenter: [number, number] = mapMarkers.length > 0
     ? [mapMarkers[0].lat, mapMarkers[0].lng]
     : [35.0116, 135.7681];
+
+  if (authLoading || !user) {
+    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-gray-200 pt-20 pb-24 overflow-x-hidden">
