@@ -24,13 +24,13 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white/70 backdrop-blur-xl border-b border-gray-200 py-3 shadow-sm" : "bg-transparent py-5"
+        scrolled ? "bg-[#0B0F19]/80 backdrop-blur-xl border-b border-indigo-500/20 py-3 shadow-lg shadow-indigo-900/10" : "bg-transparent py-5"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <Logo className="w-8 h-8 transition-transform group-hover:scale-110 duration-300 invert" />
-          <span className="font-bold text-xl text-[#0F172A] font-serif tracking-wide drop-shadow-sm">Global Trotter</span>
+          <Logo className="w-8 h-8 transition-transform group-hover:scale-110 duration-300" />
+          <span className="font-bold text-xl text-white font-serif tracking-wide drop-shadow-sm">Global Trotter</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
@@ -41,11 +41,11 @@ export default function Navbar() {
         </div>
         
         <div className="flex items-center gap-4">
-          <button className="text-sm font-bold text-gray-600 hover:text-orange-500 transition-colors">Log In</button>
+          <button className="text-sm font-bold text-gray-300 hover:text-orange-400 transition-colors">Log In</button>
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-[#0F172A] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-[0_4px_14px_0_rgba(15,23,42,0.39)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:bg-[#1E293B] transition-all"
+            className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all border border-orange-400/50"
           >
             Sign Up
           </motion.button>
@@ -58,13 +58,13 @@ export default function Navbar() {
 function NavLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
     <Link href={href} className="relative group text-sm font-medium">
-      <span className={`transition-colors duration-300 ${active ? "text-orange-500 font-bold" : "text-gray-500 group-hover:text-gray-900"}`}>
+      <span className={`transition-colors duration-300 ${active ? "text-orange-400 font-bold" : "text-gray-400 group-hover:text-white"}`}>
         {children}
       </span>
       {active && (
         <motion.div 
           layoutId="navbar-indicator"
-          className="absolute -bottom-2 left-0 right-0 h-0.5 bg-orange-500 rounded-full"
+          className="absolute -bottom-2 left-0 right-0 h-0.5 bg-orange-400 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.8)]"
         />
       )}
     </Link>
