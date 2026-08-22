@@ -6,18 +6,21 @@ import DashboardClient from "./DashboardClient";
 
 export default async function DashboardPage() {
   const session = getSessionFromCookies();
-  if (!session) redirect("/login");
+  // if (!session) redirect("/login");
 
-  const trips = await prisma.trip.findMany({
-    where: {
-      OR: [
-        { ownerId: session.userId },
-        { collaborators: { some: { userId: session.userId } } },
-      ],
-    },
-    include: { _count: { select: { stops: true } } },
-    orderBy: { startDate: "asc" },
-  });
+  let trips: any[] = [];
+  if (session) {
+    trips = await prisma.trip.findMany({
+      where: {
+        OR: [
+          { ownerId: session.userId },
+          { collaborators: { some: { userId: session.userId } } },
+        ],
+      },
+      include: { _count: { select: { stops: true } } },
+      orderBy: { startDate: "asc" },
+    });
+  }
 
   // Dates/Decimals aren't serializable across the server->client boundary as-is
   const serializedTrips = trips.map((t) => ({
