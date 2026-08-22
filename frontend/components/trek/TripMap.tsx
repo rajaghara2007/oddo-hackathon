@@ -17,7 +17,7 @@ export default function TripMap({ stops = [] }: TripMapProps) {
       label: s.city.name,
     }));
 
-  const center = markers.length > 0 ? [markers[0].lat, markers[0].lng] as [number, number] : [35.0116, 135.7681];
+  const center: [number, number] = markers.length > 0 ? [markers[0].lat, markers[0].lng] : [35.0116, 135.7681];
 
   return (
     <LeafletMap center={center} zoom={12} markers={markers} className="h-full w-full" />

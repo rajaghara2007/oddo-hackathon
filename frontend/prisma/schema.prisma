@@ -1,0 +1,177 @@
+// GlobeTrotter database schema
+// PostgreSQL only. Every relationship below is a real foreign key -
+// no embedded documents, no denormalized blobs.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ------------------------------------------------------------------
+// USERS
+// ------------------------------------------------------------------
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  ownedTrips    Trip[]              @relation("TripOwner")
+  collaborators TripCollaborator[]
+  expensesPaid  Expense[]
+
+  @@map("users")
+}
+
+// ------------------------------------------------------------------
+// CITIES - master/reference data, reused across trips instead of
+// re-typing city name/country/coords on every stop (normalization)
+// ------------------------------------------------------------------
+model City {
+  id        String  @id @default(uuid())
+  name      String
+  country   String
+  latitude  Float?
+  longitude Float?
+  timezone  String?
+
+  stops TripStop[]
+
+  @@unique([name, country])
+  @@map("cities")
+}
+
+// ------------------------------------------------------------------
+// TRIPS
+// ------------------------------------------------------------------
+
+
+model Trip {
+  id          String     @id @default(uuid())
+  ownerId     String     @map("owner_id")
+  owner       User       @relation("TripOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  startDate   DateTime   @map("start_date")
+  endDate     DateTime   @map("end_date")
+  status      String @default("PLANNING")
+  coverImageUrl String?  @map("cover_image_url")
+  isPublic    Boolean    @default(false) @map("is_public")
+  budgetTotal Decimal?   @map("budget_total") 
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  stops         TripStop[]
+  collaborators TripCollaborator[]
+  expenses      Expense[]
+  checklist     ChecklistItem[]
+
+  @@index([ownerId])
+  @@map("trips")
+}
+
+// Many-to-many: trips <-> users, with a role per membership
+
+
+model TripCollaborator {
+  id         String           @id @default(uuid())
+  tripId     String           @map("trip_id")
+  trip       Trip             @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  userId     String           @map("user_id")
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       String @default("VIEWER")
+  invitedAt  DateTime         @default(now()) @map("invited_at")
+  acceptedAt DateTime?        @map("accepted_at")
+
+  @@unique([tripId, userId])
+  @@map("trip_collaborators")
+}
+
+// ------------------------------------------------------------------
+// TRIP STOPS - ordered legs of a trip, each pinned to a City
+// ------------------------------------------------------------------
+model TripStop {
+  id            String   @id @default(uuid())
+  tripId        String   @map("trip_id")
+  trip          Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  cityId        String   @map("city_id")
+  city          City     @relation(fields: [cityId], references: [id])
+  arrivalDate   DateTime @map("arrival_date")
+  departureDate DateTime @map("departure_date")
+  orderIndex    Int      @map("order_index")
+  notes         String?
+
+  activities Activity[]
+
+  @@index([tripId])
+  @@map("trip_stops")
+}
+
+// ------------------------------------------------------------------
+// ACTIVITIES - things planned within a stop
+// ------------------------------------------------------------------
+
+
+model Activity {
+  id          String           @id @default(uuid())
+  tripStopId  String           @map("trip_stop_id")
+  tripStop    TripStop         @relation(fields: [tripStopId], references: [id], onDelete: Cascade)
+  name        String
+  category    String @default("OTHER")
+  cost        Decimal?         
+  currency    String           @default("USD")
+  startTime   DateTime?        @map("start_time")
+  endTime     DateTime?        @map("end_time")
+  bookingUrl  String?          @map("booking_url")
+  notes       String?
+
+  expenses Expense[]
+
+  @@index([tripStopId])
+  @@map("activities")
+}
+
+// ------------------------------------------------------------------
+// EXPENSES - actual spend, optionally linked to an activity
+// ------------------------------------------------------------------
+model Expense {
+  id         String   @id @default(uuid())
+  tripId     String   @map("trip_id")
+  trip       Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activityId String?  @map("activity_id")
+  activity   Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  paidById   String   @map("paid_by_id")
+  paidBy     User     @relation(fields: [paidById], references: [id])
+  amount     Decimal  
+  currency   String   @default("USD")
+  category   String @default("OTHER")
+  date       DateTime
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([tripId])
+  @@map("expenses")
+}
+
+// ------------------------------------------------------------------
+// CHECKLIST - simple packing/todo list per trip
+// ------------------------------------------------------------------
+model ChecklistItem {
+  id        String   @id @default(uuid())
+  tripId    String   @map("trip_id")
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  content   String
+  isDone    Boolean  @default(false) @map("is_done")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([tripId])
+  @@map("checklist_items")
+}

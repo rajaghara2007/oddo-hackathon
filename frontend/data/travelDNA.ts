@@ -69,7 +69,7 @@ export function calcArchetype(dna: Omit<TravelDNA, "archetype" | "archetypeIcon"
     archetype: map[top].archetype,
     archetypeIcon: map[top].icon,
     summary: map[top].summary,
-  } ?? map["adventure"];
+  };
 }
 
 export interface Destination {
