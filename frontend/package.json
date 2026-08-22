@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate --schema=../backend/prisma/schema.prisma && next build",
+    "build": "node -e \"const fs=require('fs'); fs.mkdirSync('prisma',{recursive:true}); fs.copyFileSync('../backend/prisma/schema.prisma','prisma/schema.prisma')\" && prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
