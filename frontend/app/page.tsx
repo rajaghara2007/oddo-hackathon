@@ -54,7 +54,7 @@ const titleContainer = {
   }
 };
 
-const titleWord = {
+const titleWord: any = {
   hidden: { opacity: 0, y: 50, rotateX: -90 },
   show: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", stiffness: 150, damping: 20 } }
 };
