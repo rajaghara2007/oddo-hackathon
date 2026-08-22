@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "../../components/Navbar";
+
 
 export default function NewTripPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function NewTripPage() {
 
   return (
     <>
-      <Navbar signedIn />
+  
       <main className="max-w-lg mx-auto px-8 py-16">
         <p className="label-eyebrow mb-2">New trip</p>
         <h1 className="text-3xl font-semibold mb-8">Where to?</h1>

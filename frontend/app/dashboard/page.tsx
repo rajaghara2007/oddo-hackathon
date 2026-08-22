@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionFromCookies } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import Navbar from "../components/Navbar";
-import DashboardClient from "./DashboardClient";
+import DashboardClient from "@/components/dashboard/DashboardClient";
 
 export default async function DashboardPage() {
   const session = getSessionFromCookies();
@@ -34,7 +33,6 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <Navbar signedIn />
       <DashboardClient trips={serializedTrips} />
     </>
   );

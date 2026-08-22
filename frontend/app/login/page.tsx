@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Navbar from "../components/Navbar";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function LoginPage() {
 
   return (
     <>
-    <Navbar />
+
     <main className="max-w-md mx-auto px-8 py-24">
       <p className="label-eyebrow mb-2">Welcome back</p>
       <h1 className="text-3xl font-semibold mb-8">Log in</h1>
