@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ─── Route config ────────────────────────────────────────────────────────────
 
@@ -41,8 +42,10 @@ const MORE_NAV = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
+export default function Navbar() {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const signedIn = !!user;
   const [dark, setDark]           = useState(true);
   const [moreOpen, setMoreOpen]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -236,14 +239,9 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
                 {/* Notifications */}
                 <IconButton icon={<Bell className="w-4 h-4" />} badge />
 
-                {/* Avatar → Travel Profile (/passport) */}
                 <Link href="/passport">
                   <button className="ml-1 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 border-2 border-[#1E293B] hover:border-orange-500 transition-colors shadow-sm flex items-center justify-center text-white overflow-hidden cursor-pointer">
-                    <img
-                      src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff"
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
+                    <span className="font-bold text-xs">{user?.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
                   </button>
                 </Link>
 
@@ -268,14 +266,18 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
               </>
             ) : (
               <>
-                <button className="text-sm font-bold text-gray-300 hover:text-orange-400 transition-colors">Log In</button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all border border-orange-400/50"
-                >
-                  Sign Up
-                </motion.button>
+                <Link href="/login">
+                  <button className="text-sm font-bold text-gray-300 hover:text-orange-400 transition-colors mr-4">Log In</button>
+                </Link>
+                <Link href="/register">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-orange-500 to-rose-500 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all border border-orange-400/50"
+                  >
+                    Sign Up
+                  </motion.button>
+                </Link>
               </>
             )}
           </div>
