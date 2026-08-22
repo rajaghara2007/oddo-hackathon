@@ -31,7 +31,7 @@ const LANDMARKS = [
     type: "DISTRICT",
     name: "Gion",
     desc: "Kyoto's most famous geisha district, lined with traditional wooden machiya.",
-    img: "https://images.unsplash.com/photo-1542051812871-75f11100f723?auto=format&fit=crop&q=80&w=1000",
+    img: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&q=80&w=1000",
     span: "",
   },
 ];
