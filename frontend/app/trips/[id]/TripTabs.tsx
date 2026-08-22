@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
-import PackingList from "@/components/PackingList";
-import Journal from "@/components/Journal";
+import PackingList from "@/components/trek/PackingList";
+import Journal from "@/components/trek/Journal";
 
 // Leaflet touches `window` on import, so the map must be client-only and
 // loaded lazily — SSR-rendering it throws.
-const TripMap = dynamic(() => import("@/components/TripMap"), { ssr: false });
+const TripMap = dynamic(() => import("@/components/trek/TripMap"), { ssr: false });
 
 type Stop = {
   id: string;

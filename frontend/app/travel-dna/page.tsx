@@ -1,0 +1,10 @@
+import TravelDNAClient from "@/components/trek/TravelDNAClient";
+
+export const metadata = {
+  title: "Travel DNA | Global Trotter",
+  description: "Discover your travel personality and get personalized destination recommendations.",
+};
+
+export default function TravelDNAPage() {
+  return <TravelDNAClient />;
+}
