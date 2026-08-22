@@ -7,6 +7,8 @@ import { mockTrips as fallbackTrips } from "@/data/mockDashboard";
 import TravelDNACard from "@/components/trek/TravelDNACard";
 import type { TravelDNA } from "@/data/travelDNA";
 import { MOCK_BADGES, getCurrentLevel, MOCK_PASSPORT_STATS } from "@/data/passport";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -25,6 +27,18 @@ export default function DashboardClient() {
   const [dna, setDna] = useState<TravelDNA | null>(null);
   const [trips, setTrips] = useState<any[]>(fallbackTrips);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || !user) {
+    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
+  }
 
   useEffect(() => {
     try {

@@ -24,6 +24,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import LoginModal from "./LoginModal";
 
 // ─── Route config ────────────────────────────────────────────────────────────
 
@@ -44,12 +45,15 @@ const MORE_NAV = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const signedIn = !!user;
   const [dark, setDark]           = useState(true);
   const [moreOpen, setMoreOpen]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   // Handle dark mode initializationcalStorage on mount
@@ -183,14 +187,7 @@ export default function Navbar() {
               </div>
             </div>
 
-          ) : (
-            /* ── Desktop nav (signed-out) ── */
-            <div className="hidden md:flex items-center gap-8">
-              <NavLink href="/destinations" active={pathname === "/destinations"}>Explore</NavLink>
-              <NavLink href="/dashboard"    active={pathname.startsWith("/dashboard")}>My Trips</NavLink>
-              <NavLink href="/saved"        active={pathname === "/saved"}>Wishlist</NavLink>
-            </div>
-          )}
+          ) : null}
 
           {/* ── Right action buttons ── */}
           <div className="flex items-center gap-2">
@@ -239,11 +236,49 @@ export default function Navbar() {
                 {/* Notifications */}
                 <IconButton icon={<Bell className="w-4 h-4" />} badge />
 
-                <Link href="/passport">
-                  <button className="ml-1 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 border-2 border-[#1E293B] hover:border-orange-500 transition-colors shadow-sm flex items-center justify-center text-white overflow-hidden cursor-pointer">
+                <div className="relative" ref={avatarRef}>
+                  <button
+                    onClick={() => setAvatarMenuOpen((v) => !v)}
+                    className="ml-1 w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 border-2 border-[#1E293B] hover:border-orange-500 transition-colors shadow-sm flex items-center justify-center text-white overflow-hidden cursor-pointer"
+                  >
                     <span className="font-bold text-xs">{user?.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
                   </button>
-                </Link>
+
+                  <AnimatePresence>
+                    {avatarMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute right-0 top-full mt-3 w-52 bg-[#1E293B] border border-indigo-500/20 rounded-2xl shadow-xl shadow-black/50 py-1.5 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-white/5">
+                          <p className="text-sm font-bold text-white truncate">{user?.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                        </div>
+                        <Link
+                          href="/passport"
+                          onClick={() => setAvatarMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-[#334155] transition-colors"
+                        >
+                          <User className="w-4 h-4 text-gray-500" /> Profile
+                        </Link>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setAvatarMenuOpen(false);
+                            router.push("/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                          Log Out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 {/* Mobile hamburger (shown only on < lg) */}
                 <button
@@ -266,9 +301,12 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login">
-                  <button className="text-sm font-bold text-gray-300 hover:text-orange-400 transition-colors mr-4">Log In</button>
-                </Link>
+                <button
+                  onClick={() => setLoginOpen(true)}
+                  className="text-sm font-bold text-gray-300 hover:text-orange-400 transition-colors mr-4"
+                >
+                  Log In
+                </button>
                 <Link href="/register">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -296,27 +334,29 @@ export default function Navbar() {
           >
             <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-col gap-1">
               {/* Primary nav items */}
-              {PRIMARY_NAV.map((item) => {
-                const active = pathname === item.href || pathname.startsWith(item.href + "/");
-                return (
-                  <MobileNavLink key={item.href} href={item.href} active={active} icon={item.icon}>
-                    {item.label}
-                  </MobileNavLink>
-                );
-              })}
-
-              <div className="h-px bg-indigo-500/15 my-2" />
-
-              {/* More section */}
-              <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 px-3 mb-1">More</p>
-              {MORE_NAV.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <MobileNavLink key={item.href} href={item.href} active={active} icon={item.icon}>
-                    {item.label}
-                  </MobileNavLink>
-                );
-              })}
+              {signedIn && (
+                <>
+                  {PRIMARY_NAV.map((item) => {
+                    const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                    return (
+                      <MobileNavLink key={item.href} href={item.href} active={active} icon={item.icon}>
+                        {item.label}
+                      </MobileNavLink>
+                    );
+                  })}
+                  <div className="h-px bg-indigo-500/15 my-2" />
+                  {/* More section */}
+                  <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 px-3 mb-1">More</p>
+                  {MORE_NAV.map((item) => {
+                    const active = pathname === item.href;
+                    return (
+                      <MobileNavLink key={item.href} href={item.href} active={active} icon={item.icon}>
+                        {item.label}
+                      </MobileNavLink>
+                    );
+                  })}
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -334,6 +374,8 @@ export default function Navbar() {
           />
         )}
       </AnimatePresence>
+      {/* Login Modal */}
+      <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
     </>
   );
 }

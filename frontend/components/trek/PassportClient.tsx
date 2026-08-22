@@ -12,11 +12,24 @@ import {
 import type { TravelDNA } from "@/data/travelDNA";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import DynamicMap from '@/components/trek/DynamicMap';
 
 export default function PassportClient() {
   const [dna, setDna] = useState<TravelDNA | null>(null);
   const [trips, setTrips] = useState<any[]>([]);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || !user) {
+    return <div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-white">Loading...</div>;
+  }
 
   const totalTrips = trips.length || MOCK_PASSPORT_STATS.totalTrips;
   const citiesVisited = trips.reduce((acc: string[], t) => {
@@ -40,6 +53,21 @@ export default function PassportClient() {
   }, []);
 
   const { current: level, next: nextLevel, progressPct } = getCurrentLevel(totalTrips);
+
+  // Compute map markers from all trip stops
+  const mapMarkers = trips.flatMap((trip: any) =>
+    (trip.stops ?? [])
+      .filter((s: any) => s.city?.latitude && s.city?.longitude)
+      .map((s: any) => ({
+        id: s.id,
+        lat: s.city.latitude,
+        lng: s.city.longitude,
+        label: s.city.name,
+      }))
+  );
+  const mapCenter: [number, number] = mapMarkers.length > 0
+    ? [mapMarkers[0].lat, mapMarkers[0].lng]
+    : [35.0116, 135.7681];
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-gray-200 pt-20 pb-24 overflow-x-hidden">
@@ -142,22 +170,11 @@ export default function PassportClient() {
               </div>
             </motion.div>
 
-            {/* Travel Map Placeholder */}
+            {/* Travel Map */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="bg-[#1E293B]/60 border border-indigo-500/20 rounded-3xl p-6 relative overflow-hidden h-80 flex flex-col items-center justify-center shadow-lg"
             >
-              <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1600')", backgroundSize: "cover", backgroundPosition: "center" }} />
-              <div className="absolute inset-0 bg-[#0B0F19]/60" />
-              <div className="relative z-10 flex flex-col items-center text-center">
-                <Globe2 className="w-12 h-12 text-indigo-400 mb-4 opacity-80" />
-                <h3 className="text-2xl font-bold text-white font-serif mb-2">Your World Map</h3>
-                <p className="text-sm text-gray-400 max-w-sm mb-6">Visual map tracking is coming soon. Soon you'll be able to see all your visited destinations pinned globally.</p>
-                <div className="flex gap-2">
-                  <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-bold">12 Pins Dropped</span>
-                  <span className="px-3 py-1 bg-orange-500/20 text-orange-300 border border-orange-500/30 rounded-full text-xs font-bold">3 Countries</span>
-                </div>
-              </div>
+              <DynamicMap center={mapCenter} zoom={2} markers={mapMarkers} className="h-80 w-full rounded-3xl" />
             </motion.div>
 
             {/* Achievements */}
