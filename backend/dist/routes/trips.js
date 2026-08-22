@@ -1,0 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const trips_1 = require("../controllers/trips");
+const auth_1 = require("../middlewares/auth");
+const stops_1 = __importDefault(require("./stops"));
+const expenses_1 = __importDefault(require("./expenses"));
+const checklist_1 = __importDefault(require("./checklist"));
+const router = (0, express_1.Router)();
+router.use(auth_1.authenticate);
+router.get("/", trips_1.getTrips);
+router.post("/", trips_1.createTrip);
+router.get("/:id", trips_1.getTripById);
+router.patch("/:id", trips_1.updateTrip);
+router.delete("/:id", trips_1.deleteTrip);
+router.use("/:tripId/stops", stops_1.default);
+router.use("/:tripId/expenses", expenses_1.default);
+router.use("/:tripId/checklist", checklist_1.default);
+exports.default = router;

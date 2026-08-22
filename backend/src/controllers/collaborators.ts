@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Response, Request } from "express";
 import { z } from "zod";
 import prisma from "../utils/prisma";

@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const checklist_1 = require("../controllers/checklist");
+const auth_1 = require("../middlewares/auth");
+const router = (0, express_1.Router)({ mergeParams: true });
+router.use(auth_1.authenticate);
+router.get("/", checklist_1.getChecklist);
+router.post("/", checklist_1.createChecklistItem);
+router.patch("/:id", checklist_1.updateChecklistItem);
+router.delete("/:id", checklist_1.deleteChecklistItem);
+exports.default = router;

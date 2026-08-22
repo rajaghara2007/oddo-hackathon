@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const collaborators_1 = require("../controllers/collaborators");
+const auth_1 = require("../middlewares/auth");
+const router = (0, express_1.Router)({ mergeParams: true });
+router.use(auth_1.authenticate);
+router.get("/", collaborators_1.getCollaborators);
+router.post("/", collaborators_1.inviteCollaborator);
+router.delete("/:userId", collaborators_1.removeCollaborator);
+exports.default = router;

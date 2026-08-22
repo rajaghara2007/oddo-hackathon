@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const activities_1 = require("../controllers/activities");
+const auth_1 = require("../middlewares/auth");
+const router = (0, express_1.Router)({ mergeParams: true });
+router.use(auth_1.authenticate);
+router.get("/", activities_1.getActivities);
+router.post("/", activities_1.createActivity);
+router.patch("/:id", activities_1.updateActivity);
+router.delete("/:id", activities_1.deleteActivity);
+exports.default = router;
