@@ -65,7 +65,11 @@ export function calcArchetype(dna: Omit<TravelDNA, "archetype" | "archetypeIcon"
     },
   };
 
-  return map[top] ?? map["adventure"];
+  return {
+    archetype: map[top].archetype,
+    archetypeIcon: map[top].icon,
+    summary: map[top].summary,
+  } ?? map["adventure"];
 }
 
 export interface Destination {

@@ -1,8 +1,25 @@
 "use client";
-export default function TripMap({ stops }: { stops?: any[] }) {
+"use client";
+
+import LeafletMap, { MapMarker } from "./Map";
+
+interface TripMapProps {
+  stops?: any[];
+}
+
+export default function TripMap({ stops = [] }: TripMapProps) {
+  const markers: MapMarker[] = stops
+    .filter((s) => s.city?.latitude && s.city?.longitude)
+    .map((s) => ({
+      id: s.id,
+      lat: s.city.latitude,
+      lng: s.city.longitude,
+      label: s.city.name,
+    }));
+
+  const center = markers.length > 0 ? [markers[0].lat, markers[0].lng] as [number, number] : [35.0116, 135.7681];
+
   return (
-    <div className="p-6 text-gray-400 h-64 flex items-center justify-center bg-[#1E293B] rounded-xl">
-      <p className="text-sm">Map view coming soon.</p>
-    </div>
+    <LeafletMap center={center} zoom={12} markers={markers} className="h-full w-full" />
   );
 }

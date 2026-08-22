@@ -1,6 +1,20 @@
 "use client";
 
 import { useState } from "react";
+
+// Simple fallback translation function
+const t = (key: string) => {
+  const map: Record<string, string> = {
+    itinerary: "Itinerary",
+    map: "Map",
+    budget: "Budget",
+    packing: "Packing",
+    journal: "Journal",
+    checklist: "Checklist"
+  };
+  const shortKey = key.split('.').pop() ?? key;
+  return map[shortKey] || shortKey;
+};
 import dynamic from "next/dynamic";
 import PackingList from "@/components/trek/PackingList";
 import Journal from "@/components/trek/Journal";
@@ -149,9 +163,9 @@ export default function TripTabs({
         </section>
       )}
 
-      {tab === "packing" && <PackingList storageKey={`gt_packing_${tripId}`} />}
+      {tab === "packing" && <PackingList />}
 
-      {tab === "journal" && <Journal storageKey={`gt_journal_${tripId}`} />}
+      {tab === "journal" && <Journal />}
     </div>
   );
 }

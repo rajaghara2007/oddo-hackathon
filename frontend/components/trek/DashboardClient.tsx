@@ -251,8 +251,7 @@ export default function DashboardClient() {
         </div>
       </section>
 
-      {/* ✨ My Wishlist Section */}
-      <WishlistSection />
+
     </div>
   );
 }
