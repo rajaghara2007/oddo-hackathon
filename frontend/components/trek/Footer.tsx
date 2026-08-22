@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Globe, ExternalLink, Heart, Play } from "lucide-react";
+import { Compass, ExternalLink, Heart, Play } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex flex-col gap-3 max-w-xs">
           <div className="flex items-center gap-2">
-            <Globe className="w-6 h-6 text-orange-400" />
+            <Compass className="w-6 h-6 text-orange-400" />
             <span className="font-bold text-lg text-white font-serif">Tripora</span>
           </div>
           <p className="text-sm leading-relaxed">

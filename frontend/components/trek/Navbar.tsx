@@ -102,7 +102,7 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <Globe className="w-6 h-6 text-orange-400 transition-transform group-hover:scale-110 duration-300" />
+            <Compass className="w-6 h-6 text-orange-400 transition-transform group-hover:scale-110 duration-300" />
             <span className="font-bold text-xs tracking-[0.18em] text-white uppercase hidden sm:block">
               Tripora
             </span>

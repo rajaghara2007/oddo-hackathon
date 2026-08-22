@@ -228,39 +228,6 @@ export default function DestinationDetailsPage() {
         </motion.div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-indigo-500/15 bg-[#080C14]">
-        <div className="max-w-[1300px] mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* Brand */}
-          <div>
-            <p className="text-sm font-bold tracking-widest uppercase text-orange-400 mb-3">Tripora</p>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              Curating ultra-global exploration for the discerning traveler. From hidden cities to private ateliers, we map the world's most extraordinary experiences.
-            </p>
-          </div>
-          {/* Destinations */}
-          <div>
-            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-4">Destinations</p>
-            <ul className="space-y-2.5">
-              {["Japan", "Scandinavia", "The Alps"].map(d => (
-                <li key={d}><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">{d}</Link></li>
-              ))}
-            </ul>
-          </div>
-          {/* Explore */}
-          <div>
-            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-4">Explore</p>
-            <ul className="space-y-2.5">
-              {["Heritage", "The Guardian", "Contact"].map(d => (
-                <li key={d}><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">{d}</Link></li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="border-t border-white/5 py-4 text-center text-[11px] text-gray-600 tracking-wider">
-          © 2025 Tripora · All rights reserved
-        </div>
-      </footer>
     </div>
   );
 }
