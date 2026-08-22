@@ -2,8 +2,36 @@
 
 import { Plane, Train, Hotel, Landmark, Utensils, Share2, Edit3, UserPlus, Plus, Check, MapPin, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import api from "@/lib/api";
 
 export default function TripItineraryPage() {
+  const params = useParams();
+  const [trip, setTrip] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTrip = async () => {
+      try {
+        const { data } = await api.get(`/trips/${params.id}`);
+        setTrip(data);
+      } catch (err) {
+        console.error("Failed to load trip", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (params?.id) fetchTrip();
+  }, [params.id]);
+
+  // Fallback to static values if no trip is found
+  const title = trip?.title || "Parisian Getaway";
+  const desc = trip?.description || "Oct 12 - Oct 16 • 5 Days";
+  const image = trip?.coverImageUrl || "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=1000";
+  const budget = trip?.budgetTotal ? `$${Number(trip.budgetTotal).toLocaleString()}` : "$5,000";
+  const stops = trip?.stops || [];
+
   return (
     <div className="min-h-screen pb-24 pt-28 text-gray-200">
       <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-[280px_1fr_280px] gap-8">
@@ -51,8 +79,8 @@ export default function TripItineraryPage() {
           {/* Header Image */}
           <div className="relative h-64 bg-[#020617]">
             <img 
-              src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=1000" 
-              alt="Paris" 
+              src={image} 
+              alt="Trip Cover" 
               className="w-full h-full object-cover opacity-60 mix-blend-screen"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-transparent to-transparent" />
@@ -64,10 +92,10 @@ export default function TripItineraryPage() {
             >
               <div>
                 <span className="bg-indigo-500/20 border border-indigo-400/30 backdrop-blur text-indigo-300 px-3 py-1 rounded-full text-xs font-bold mb-3 inline-block">
-                  Autumn in Paris
+                  {trip?.isPublic ? "Public Itinerary" : "Private Trip"}
                 </span>
-                <h1 className="text-4xl font-bold font-serif mb-1">Parisian Getaway</h1>
-                <p className="text-sm text-gray-400">Oct 12 - Oct 16 • 5 Days</p>
+                <h1 className="text-4xl font-bold font-serif mb-1">{title}</h1>
+                <p className="text-sm text-gray-400">{desc}</p>
               </div>
               <div className="flex gap-2">
                 <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center hover:bg-white/20 transition-colors border border-white/10">
@@ -86,74 +114,53 @@ export default function TripItineraryPage() {
               {/* Vertical line */}
               <div className="absolute left-[0.85rem] top-8 bottom-0 w-px bg-indigo-500/20" />
               
-              {/* Day Header */}
-              <motion.div 
-                initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                className="relative mb-10"
-              >
-                <div className="absolute -left-[2.1rem] w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm z-10 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
-                  1
-                </div>
-                <h2 className="text-2xl font-bold font-serif text-white">Arrival & Marais</h2>
-                <p className="text-sm text-gray-400">Thursday, Oct 12</p>
-              </motion.div>
-
-              {/* Events */}
-              <div className="space-y-8 relative">
-                
-                {/* Flight Arrival */}
-                <TimelineEvent time="10:30 AM" icon={<Plane />} iconColor="text-indigo-400 bg-indigo-500/20">
-                  <h4 className="text-lg font-bold font-serif text-white mb-1">Flight Arrival</h4>
-                  <p className="text-sm text-gray-400 mb-3">Charles de Gaulle<br/>Airport (CDG)</p>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400 bg-[#0F172A] px-2 py-1 rounded-md border border-indigo-500/20">
-                    <Check className="w-3 h-3 text-green-400" /> Terminal 2E
-                  </span>
-                </TimelineEvent>
-
-                {/* Hotel Check-in */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="relative"
-                >
-                  <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-orange-500 z-10 ring-4 ring-[#0B0F19]" />
-                  <div className="flex gap-4">
-                    <div className="w-16 pt-1 text-xs font-bold text-gray-500 text-right">02:00 PM</div>
-                    <div className="flex-1 bg-[#0F172A] rounded-2xl border border-indigo-500/20 shadow-lg overflow-hidden">
-                      <div className="h-32 bg-[#020617] relative">
-                         <img src="https://images.unsplash.com/photo-1551882547-ff40c0d12c56?auto=format&fit=crop&q=80&w=1000" alt="Hotel" className="w-full h-full object-cover opacity-70" />
-                         <span className="absolute top-3 right-3 bg-yellow-500/90 backdrop-blur text-black text-[10px] font-bold px-2 py-1 rounded-full shadow-md flex items-center gap-1">
-                           <Star className="w-3 h-3 fill-current" /> Lodging
-                         </span>
+              {loading ? (
+                <div className="text-center py-20 text-gray-500">Loading timeline...</div>
+              ) : stops.length > 0 ? (
+                stops.map((stop: any, index: number) => (
+                  <div key={stop.id} className="mb-12 relative">
+                    {/* Day Header */}
+                    <motion.div 
+                      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                      className="relative mb-10"
+                    >
+                      <div className="absolute -left-[2.1rem] w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm z-10 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+                        {index + 1}
                       </div>
-                      <div className="p-5 relative">
-                        <div className="absolute right-4 top-5 w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500">
-                          <Hotel className="w-4 h-4" />
-                        </div>
-                        <h4 className="text-xl font-bold font-serif text-white mb-1">Le Pavillon de<br/>la Reine</h4>
-                        <p className="text-xs text-gray-400 mb-4 flex items-start gap-1">
-                          <MapPin className="w-3 h-3 mt-0.5 text-orange-400" /> Place des Vosges, 3rd Arrondissement
-                        </p>
-                        <div className="flex flex-wrap gap-2 mb-6">
-                          <span className="text-[10px] font-bold text-indigo-300 bg-indigo-900/40 px-2 py-1 rounded border border-indigo-500/20">🌿 Spa & Wellness</span>
-                          <span className="text-[10px] font-bold text-indigo-300 bg-indigo-900/40 px-2 py-1 rounded border border-indigo-500/20">🪴 Courtyard Garden</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="flex-1 bg-indigo-600 text-white text-sm font-bold py-2.5 rounded-lg hover:bg-indigo-500 transition-colors shadow-md">View Booking</button>
-                        </div>
-                      </div>
-                    </div>
+                      <h2 className="text-2xl font-bold font-serif text-white">{stop.city?.name || "Stop"}</h2>
+                      <p className="text-sm text-gray-400">
+                        {new Date(stop.arrivalDate).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })} 
+                        {" - "}
+                        {new Date(stop.departureDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </p>
+                    </motion.div>
                   </div>
-                </motion.div>
+                ))
+              ) : (
+                <>
+                  {/* Fallback Static Timeline */}
+                  <motion.div 
+                    initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                    className="relative mb-10"
+                  >
+                    <div className="absolute -left-[2.1rem] w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm z-10 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+                      1
+                    </div>
+                    <h2 className="text-2xl font-bold font-serif text-white">Arrival & Marais</h2>
+                    <p className="text-sm text-gray-400">Thursday, Oct 12</p>
+                  </motion.div>
 
-                {/* Explore */}
-                <TimelineEvent time="04:30 PM" icon={<Landmark />} iconColor="text-orange-400 bg-orange-500/20">
-                  <h4 className="text-lg font-bold font-serif text-white mb-2">Explore Le<br/>Marais</h4>
-                  <p className="text-sm text-gray-400">Walking tour of historic streets, boutiques, and cafes.</p>
-                </TimelineEvent>
-
-              </div>
+                  <div className="space-y-8 relative">
+                    <TimelineEvent time="10:30 AM" icon={<Plane />} iconColor="text-indigo-400 bg-indigo-500/20">
+                      <h4 className="text-lg font-bold font-serif text-white mb-1">Flight Arrival</h4>
+                      <p className="text-sm text-gray-400 mb-3">Charles de Gaulle<br/>Airport (CDG)</p>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400 bg-[#0F172A] px-2 py-1 rounded-md border border-indigo-500/20">
+                        <Check className="w-3 h-3 text-green-400" /> Terminal 2E
+                      </span>
+                    </TimelineEvent>
+                  </div>
+                </>
+              )}
             </div>
             
             <div className="mt-12 text-center">
@@ -198,19 +205,14 @@ export default function TripItineraryPage() {
                
                <div className="flex justify-between items-end mb-3">
                  <div>
-                   <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">TOTAL EST.</p>
-                   <p className="text-3xl font-bold text-orange-400">$4,250</p>
-                 </div>
-                 <div className="text-right">
                    <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">LIMIT</p>
-                   <p className="text-sm font-bold text-gray-300">$5,000</p>
+                   <p className="text-3xl font-bold text-orange-400">{budget}</p>
                  </div>
                </div>
                
                {/* Progress bar */}
                <div className="w-full h-2 bg-indigo-950 rounded-full overflow-hidden flex mb-6 shadow-inner">
                  <motion.div initial={{ width: 0 }} animate={{ width: "45%" }} transition={{ delay: 0.5, duration: 1 }} className="h-full bg-indigo-500" />
-                 <motion.div initial={{ width: 0 }} animate={{ width: "25%" }} transition={{ delay: 0.8, duration: 1 }} className="h-full bg-orange-400" />
                </div>
             </div>
           </motion.div>
