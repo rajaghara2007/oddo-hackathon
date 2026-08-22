@@ -2,21 +2,13 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Environment } from "@react-three/drei";
-import { motion } from "framer-motion-3d";
-import { useScroll, useTransform } from "framer-motion";
+import { useScroll } from "framer-motion";
 import { useRef, useMemo } from "react";
 import * as THREE from "three";
 
 function PaperPlane({ scrollYProgress }: { scrollYProgress: any }) {
-  // Map scroll progress to position and rotation
-  const x = useTransform(scrollYProgress, [0, 1], [-10, 10]);
-  const y = useTransform(scrollYProgress, [0, 1], [5, -5]);
-  const z = useTransform(scrollYProgress, [0, 1], [2, -2]);
+  const groupRef = useRef<THREE.Group>(null);
   
-  const rotateX = useTransform(scrollYProgress, [0, 1], [0.5, 0.2]);
-  const rotateY = useTransform(scrollYProgress, [0, 1], [-0.5, 0.5]);
-  const rotateZ = useTransform(scrollYProgress, [0, 1], [-0.2, 0.2]);
-
   // Create a simple paper plane geometry
   const geometry = useMemo(() => {
     const shape = new THREE.Shape();
@@ -33,15 +25,26 @@ function PaperPlane({ scrollYProgress }: { scrollYProgress: any }) {
     return geo;
   }, []);
 
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const progress = scrollYProgress.get();
+    
+    // Map scroll progress (0 to 1) to position and rotation
+    // x: from right to left
+    const x = 10 - (progress * 20); 
+    const y = 5 - (progress * 10);
+    const z = 2 - (progress * 4);
+    
+    const rotateX = 0.5 - (progress * 0.3);
+    const rotateY = -0.5 + (progress * 1);
+    const rotateZ = -0.2 + (progress * 0.4);
+
+    groupRef.current.position.set(x, y, z);
+    groupRef.current.rotation.set(rotateX, rotateY, rotateZ);
+  });
+
   return (
-    <motion.group
-      position-x={x}
-      position-y={y}
-      position-z={z}
-      rotation-x={rotateX}
-      rotation-y={rotateY}
-      rotation-z={rotateZ}
-    >
+    <group ref={groupRef}>
       <Float speed={3} rotationIntensity={1} floatIntensity={2}>
         <mesh geometry={geometry} scale={2}>
           <meshStandardMaterial 
@@ -53,7 +56,7 @@ function PaperPlane({ scrollYProgress }: { scrollYProgress: any }) {
           />
         </mesh>
       </Float>
-    </motion.group>
+    </group>
   );
 }
 
