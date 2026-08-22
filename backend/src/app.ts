@@ -5,6 +5,8 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/auth";
 import tripsRoutes from "./routes/trips";
+import citiesRoutes from "./routes/cities";
+import dashboardRoutes from "./routes/dashboard";
 
 // Initialize express app
 const app = express();
@@ -29,6 +31,8 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/trips", tripsRoutes);
+app.use("/api/cities", citiesRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Basic health check route
 app.get("/api/health", (req: Request, res: Response) => {
