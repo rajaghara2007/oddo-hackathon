@@ -10,18 +10,36 @@ import {
   MOCK_PASSPORT_STATS, MOCK_BADGES, MOCK_PAST_TRIPS, getCurrentLevel 
 } from "@/data/passport";
 import type { TravelDNA } from "@/data/travelDNA";
+import api from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function PassportClient() {
   const [dna, setDna] = useState<TravelDNA | null>(null);
+  const [trips, setTrips] = useState<any[]>([]);
+  const { user } = useAuth();
+
+  const totalTrips = trips.length || MOCK_PASSPORT_STATS.totalTrips;
+  const citiesVisited = trips.reduce((acc: string[], t) => {
+    const cities = t.stops?.map((s: any) => s.city?.name).filter(Boolean) || [];
+    return [...new Set([...acc, ...cities])];
+  }, []).length || MOCK_PASSPORT_STATS.cities;
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem("travel_dna");
       if (saved) setDna(JSON.parse(saved));
     } catch {}
+
+    const fetchTrips = async () => {
+      try {
+        const { data } = await api.get("/trips");
+        setTrips(data);
+      } catch {}
+    };
+    fetchTrips();
   }, []);
 
-  const { current: level, next: nextLevel, progressPct } = getCurrentLevel(MOCK_PASSPORT_STATS.totalTrips);
+  const { current: level, next: nextLevel, progressPct } = getCurrentLevel(totalTrips);
 
   return (
     <div className="min-h-screen bg-[#0B0F19] text-gray-200 pt-20 pb-24 overflow-x-hidden">
@@ -70,7 +88,7 @@ export default function PassportClient() {
                 {/* Info & Stats */}
                 <div className="flex-1 w-full">
                   <div className="mb-6 text-center md:text-left">
-                    <h2 className="text-2xl font-bold text-white mb-2">Alex Wanderer</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">{user?.name || "Demo Explorer"}</h2>
                     {dna?.archetype ? (
                       <div className="flex items-center justify-center md:justify-start gap-2">
                         <span className="text-xs font-bold text-indigo-300 bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-500/30">
@@ -90,8 +108,8 @@ export default function PassportClient() {
                   {/* Stats Grid */}
                   <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
                     {[
-                      { icon: "🌍", val: MOCK_PASSPORT_STATS.cities, label: "Cities" },
-                      { icon: "🇮🇳", val: MOCK_PASSPORT_STATS.states, label: "States" },
+                      { icon: "🌍", val: citiesVisited, label: "Cities" },
+                      { icon: "🗺️", val: trips.length || MOCK_PASSPORT_STATS.totalTrips, label: "Trips" },
                       { icon: "🌎", val: MOCK_PASSPORT_STATS.countries, label: "Countries" },
                       { icon: "🥾", val: MOCK_PASSPORT_STATS.adventures, label: "Adventures" },
                       { icon: "🍜", val: MOCK_PASSPORT_STATS.foodExperiences, label: "Food Exp." },
