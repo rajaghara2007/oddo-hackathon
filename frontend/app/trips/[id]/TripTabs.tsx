@@ -37,7 +37,6 @@ export default function TripTabs({
   checklist: ChecklistItem[];
   budgetTotal: number | null;
 }) {
-  const { t } = useLanguage();
   const [tab, setTab] = useState<Tab>("itinerary");
 
   const totalSpent = expenses.reduce((sum, e) => sum + Number(e.amount), 0);

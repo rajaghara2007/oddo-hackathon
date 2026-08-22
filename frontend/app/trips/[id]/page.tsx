@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import api from "@/lib/api";
+import DynamicMap from "@/components/trek/DynamicMap";
 
 export default function TripItineraryPage() {
   const params = useParams();
@@ -196,23 +197,24 @@ export default function TripItineraryPage() {
                </button>
             </div>
 
-            {/* Budget Tracker Card */}
-            <div className="bg-[#0F172A] rounded-2xl p-6 border border-indigo-500/20 shadow-lg">
-               <div className="flex justify-between items-center mb-6">
-                 <h3 className="text-xs font-bold tracking-widest uppercase text-gray-500">BUDGET TRACKER</h3>
-                 <span className="text-gray-600">⋯</span>
+            {/* Map Card */}
+            <div className="bg-[#0F172A] rounded-2xl p-4 border border-indigo-500/20 shadow-lg">
+               <div className="flex justify-between items-center mb-4 px-2">
+                 <h3 className="text-xs font-bold tracking-widest uppercase text-gray-500">TRIP MAP</h3>
+                 <MapPin className="w-4 h-4 text-orange-400" />
                </div>
                
-               <div className="flex justify-between items-end mb-3">
-                 <div>
-                   <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">LIMIT</p>
-                   <p className="text-3xl font-bold text-orange-400">{budget}</p>
-                 </div>
-               </div>
-               
-               {/* Progress bar */}
-               <div className="w-full h-2 bg-indigo-950 rounded-full overflow-hidden flex mb-6 shadow-inner">
-                 <motion.div initial={{ width: 0 }} animate={{ width: "45%" }} transition={{ delay: 0.5, duration: 1 }} className="h-full bg-indigo-500" />
+               <div className="w-full h-48 rounded-xl overflow-hidden border border-indigo-500/20 relative">
+                 <DynamicMap 
+                   center={stops.length > 0 && stops[0].city ? [stops[0].city.latitude, stops[0].city.longitude] : [35.0116, 135.7681]}
+                   zoom={10}
+                   markers={stops.filter((s: any) => s.city).map((s: any) => ({
+                     id: s.id,
+                     lat: s.city.latitude,
+                     lng: s.city.longitude,
+                     label: s.city.name
+                   }))}
+                 />
                </div>
             </div>
           </motion.div>

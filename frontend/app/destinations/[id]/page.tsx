@@ -5,6 +5,7 @@ import { MapPin, Compass, ChevronDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import DynamicMap from "@/components/trek/DynamicMap";
 
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 const COUNTRIES = ["Japan", "France", "Italy", "Thailand", "India", "Morocco"];
@@ -208,24 +209,17 @@ export default function DestinationDetailsPage() {
 
       {/* ─── Explore the Topography ─── */}
       <section className="mx-6 mb-20 max-w-[1300px] lg:mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="relative rounded-3xl overflow-hidden bg-[#0F172A] border border-indigo-500/20 p-12 md:p-16 text-center shadow-2xl"
-        >
-          {/* Background glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.12)_0%,transparent_70%)]" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl" />
-
-          <div className="relative z-10">
-            <div className="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-6">
-              <Compass className="w-7 h-7 text-orange-400" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold font-serif text-white mb-4">Explore the Topography</h2>
-            <p className="text-gray-400 text-base max-w-lg mx-auto">
-              Interactive map detailing sacred routes, hidden teahouses, and exclusive guardian access points.
-            </p>
-          </div>
-        </motion.div>
+        <div className="relative rounded-3xl overflow-hidden bg-[#0F172A] border border-indigo-500/20 shadow-2xl h-[500px]">
+          <DynamicMap 
+            center={[35.0116, 135.7681]} // Kyoto
+            zoom={12}
+            markers={[
+              { id: "fushimi", lat: 34.9671, lng: 135.7727, label: "Fushimi Inari-taisha" },
+              { id: "kinkaku", lat: 35.0394, lng: 135.7292, label: "Kinkaku-ji" },
+              { id: "gion", lat: 35.0037, lng: 135.7785, label: "Gion District" }
+            ]}
+          />
+        </div>
       </section>
 
     </div>
