@@ -56,6 +56,7 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
             <PillLink href="/dashboard" active={pathname === "/dashboard"}>My Trips</PillLink>
             <PillLink href="/travel-dna" active={pathname === "/travel-dna"}>🧬 DNA</PillLink>
             <PillLink href="/passport" active={pathname === "/passport"}>🛂 Passport</PillLink>
+            <PillLink href="/guardian" active={pathname === "/guardian"}>🛡️ Guardian</PillLink>
           </div>
         ) : (
           <div className="hidden md:flex items-center gap-8">
