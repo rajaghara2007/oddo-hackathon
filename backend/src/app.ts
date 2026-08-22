@@ -36,6 +36,11 @@ app.use("/api/cities", citiesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/public", publicRoutes);
 
+// Basic root route
+app.get("/", (req: Request, res: Response) => {
+  res.send("Welcome to the GlobleTrotter/Tripora API! The server is running successfully.");
+});
+
 // Basic health check route
 app.get("/api/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "OK", timestamp: new Date().toISOString() });
