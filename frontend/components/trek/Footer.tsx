@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col gap-3 max-w-xs">
           <div className="flex items-center gap-2">
             <Globe className="w-6 h-6 text-orange-400" />
-            <span className="font-bold text-lg text-white font-serif">Global Trotter</span>
+            <span className="font-bold text-lg text-white font-serif">Tripora</span>
           </div>
           <p className="text-sm leading-relaxed">
             Curate extraordinary journeys with AI-driven itineraries and world-class planning tools.
@@ -55,7 +55,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-[1400px] mx-auto px-6 mt-10 pt-6 border-t border-indigo-500/10 text-xs text-gray-500 flex flex-col md:flex-row justify-between gap-2">
-        <p>© {new Date().getFullYear()} Global Trotter. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Tripora. All rights reserved.</p>
         <p>Built for the modern adventurer. ✈️</p>
       </div>
     </footer>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Globe,
   Bell,
@@ -19,6 +19,7 @@ import {
   User,
   Settings,
   Palmtree,
+  Search,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -34,10 +35,8 @@ const PRIMARY_NAV = [
 ];
 
 const MORE_NAV = [
-  { label: "Vacay",          href: "/vacay",    icon: <Palmtree className="w-4 h-4" /> },
   { label: "Expenses",       href: "/expenses", icon: <Receipt  className="w-4 h-4" /> },
   { label: "Travel Profile", href: "/passport", icon: <User     className="w-4 h-4" /> },
-  { label: "Settings",       href: "/settings", icon: <Settings className="w-4 h-4" /> },
 ];
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -48,8 +47,9 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
   const [moreOpen, setMoreOpen]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-  // Sync theme with localStorage on mount
+  // Handle dark mode initializationcalStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("theme");
     if (stored === "light") {
@@ -102,21 +102,34 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <Globe className="w-7 h-7 text-orange-400 transition-transform group-hover:scale-110 duration-300" />
-            <span className="font-bold text-lg text-white font-serif tracking-wide drop-shadow-sm hidden sm:block">
-              Global Trotter
+            <Globe className="w-6 h-6 text-orange-400 transition-transform group-hover:scale-110 duration-300" />
+            <span className="font-bold text-xs tracking-[0.18em] text-white uppercase hidden sm:block">
+              Tripora
             </span>
           </Link>
 
           {/* ── Desktop primary nav (signed-in) ── */}
           {signedIn ? (
-            <div className="hidden lg:flex items-center bg-[#1E293B]/80 backdrop-blur-md p-1 rounded-full border border-indigo-500/20 gap-0.5">
+            <div className="hidden lg:flex items-center gap-7">
               {PRIMARY_NAV.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
-                  <PillLink key={item.href} href={item.href} active={active}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative text-[11px] font-bold tracking-widest uppercase transition-colors duration-200 group ${
+                      active ? "text-orange-400" : "text-gray-400 hover:text-white"
+                    }`}
+                  >
                     {item.label}
-                  </PillLink>
+                    {active && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        className="absolute -bottom-1 left-0 right-0 h-px bg-orange-400"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                  </Link>
                 );
               })}
 
@@ -124,10 +137,8 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
               <div className="relative" ref={moreRef}>
                 <button
                   onClick={() => setMoreOpen((v) => !v)}
-                  className={`relative flex items-center gap-1 px-4 py-1.5 text-xs font-bold rounded-full transition-colors z-10 ${
-                    isMoreActive || moreOpen
-                      ? "text-white bg-[#334155]"
-                      : "text-gray-400 hover:text-gray-200"
+                  className={`flex items-center gap-1 text-[11px] font-bold tracking-widest uppercase transition-colors ${
+                    isMoreActive || moreOpen ? "text-orange-400" : "text-gray-400 hover:text-white"
                   }`}
                 >
                   More
@@ -141,7 +152,7 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.97 }}
                       transition={{ duration: 0.18 }}
-                      className="absolute right-0 top-full mt-2 w-48 bg-[#1E293B] border border-indigo-500/20 rounded-2xl shadow-xl shadow-black/50 py-1.5 overflow-hidden"
+                      className="absolute left-0 top-full mt-3 w-48 bg-[#1E293B] border border-indigo-500/20 rounded-2xl shadow-xl shadow-black/50 py-1.5 overflow-hidden"
                     >
                       {MORE_NAV.map((item) => {
                         const active = pathname === item.href;
@@ -168,6 +179,7 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
                 </AnimatePresence>
               </div>
             </div>
+
           ) : (
             /* ── Desktop nav (signed-out) ── */
             <div className="hidden md:flex items-center gap-8">
@@ -181,6 +193,12 @@ export default function Navbar({ signedIn = false }: { signedIn?: boolean }) {
           <div className="flex items-center gap-2">
             {signedIn ? (
               <>
+                {/* Search */}
+                <IconButton 
+                  icon={<Search className="w-4 h-4" />} 
+                  onClick={() => router.push("/destinations")}
+                />
+
                 {/* Theme toggle */}
                 <motion.button
                   whileTap={{ scale: 0.85 }}
@@ -373,9 +391,12 @@ function MobileNavLink({
   );
 }
 
-function IconButton({ icon, badge }: { icon: React.ReactNode; badge?: boolean }) {
+function IconButton({ icon, badge, onClick }: { icon: React.ReactNode; badge?: boolean; onClick?: () => void }) {
   return (
-    <button className="relative w-9 h-9 rounded-full bg-[#1E293B] hover:bg-[#334155] border border-indigo-500/10 flex items-center justify-center text-gray-300 hover:text-orange-400 transition-colors shadow-sm">
+    <button 
+      onClick={onClick}
+      className="relative w-9 h-9 rounded-full bg-[#1E293B] hover:bg-[#334155] border border-indigo-500/10 flex items-center justify-center text-gray-300 hover:text-orange-400 transition-colors shadow-sm"
+    >
       {icon}
       {badge && <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-[#0B0F19]" />}
     </button>

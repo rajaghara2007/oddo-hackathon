@@ -1,155 +1,267 @@
 "use client";
 
-import { Calendar, Plus, MapPin, Maximize2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { MapPin, Compass, ChevronDown, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
+const COUNTRIES = ["Japan", "France", "Italy", "Thailand", "India", "Morocco"];
+
+const LANDMARKS = [
+  {
+    id: "fushimi",
+    type: "SHRINE",
+    name: "Fushimi Inari-taisha",
+    desc: "Wander through seemingly endless vermilion torii gates leading up the sacred Mount Inari.",
+    img: "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&q=80&w=1200",
+    span: "row",
+  },
+  {
+    id: "kinkaku",
+    type: "TEMPLE",
+    name: "Kinkaku-ji",
+    desc: "The legendary Golden Pavilion casting a shimmering reflection across the mirror pond.",
+    img: "https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?auto=format&fit=crop&q=80&w=1000",
+    span: "",
+  },
+  {
+    id: "gion",
+    type: "DISTRICT",
+    name: "Gion",
+    desc: "Kyoto's most famous geisha district, lined with traditional wooden machiya.",
+    img: "https://images.unsplash.com/photo-1542051812871-75f11100f723?auto=format&fit=crop&q=80&w=1000",
+    span: "",
+  },
+];
 
 export default function DestinationDetailsPage() {
+  const [season, setSeason] = useState("Spring");
+  const [country, setCountry] = useState("Japan");
+  const [when, setWhen] = useState("");
+  const [seasonOpen, setSeasonOpen] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen text-gray-200 pb-24 font-sans pt-16">
-      {/* Hero Section */}
-      <div className="relative h-[600px] overflow-hidden">
-        <motion.img 
-          initial={{ scale: 1.1 }}
+    <div className="min-h-screen bg-[#0B0F19] text-gray-200 font-sans">
+
+      {/* ─── Hero Section ─── */}
+      <section className="relative min-h-[65vh] md:min-h-[600px] flex flex-col justify-end overflow-hidden pt-14">
+        {/* Background image */}
+        <motion.img
+          initial={{ scale: 1.08 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=2000" 
-          alt="Kyoto Autumn" 
-          className="w-full h-full object-cover opacity-80 mix-blend-screen"
+          transition={{ duration: 2, ease: "easeOut" }}
+          src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=2400"
+          alt="Kyoto"
+          className="absolute inset-0 w-full h-full object-cover opacity-35"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/60 to-transparent" />
-        
-        <div className="absolute bottom-16 inset-x-0">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+        {/* Deep gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0F19]/60 via-[#0B0F19]/40 to-[#0B0F19]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19]/80 via-transparent to-transparent" />
+
+        {/* Hero content */}
+        <div className="relative z-10 max-w-[1300px] mx-auto w-full px-6 pb-14 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 items-end">
+
+          {/* Left: text */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row justify-between items-end gap-6"
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="max-w-2xl">
-              <span className="text-xs font-bold tracking-widest uppercase text-orange-400 mb-4 block flex items-center gap-2">
-                <span className="w-8 h-px bg-orange-400"></span> DESTINATION GUIDE
-              </span>
-              <h1 className="text-6xl md:text-7xl font-bold font-serif text-white mb-6 drop-shadow-lg">Kyoto, Japan</h1>
-              <p className="text-xl text-indigo-100 font-medium leading-relaxed max-w-xl">
-                The cultural heart of Japan, where ancient traditions endure in temples, gardens, and teahouses.
-              </p>
-            </div>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-indigo-600 text-white px-8 py-4 rounded-full font-bold flex items-center gap-2 shadow-[0_8px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_12px_25px_rgba(79,70,229,0.4)] hover:bg-indigo-500 transition-all border border-indigo-400/30"
+            <span className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-orange-400 mb-5">
+              <MapPin className="w-3 h-3" /> Japan · Kansai Region
+            </span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-serif text-white leading-tight mb-5 drop-shadow-xl">
+              Echoes of<br />an Empire
+            </h1>
+            <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl mb-8">
+              Serving as Japan's capital and the emperor's residence from 794 until 1868, Kyoto is a city of
+              thousands of classical Buddhist temples, Shinto shrines, and traditional wooden machiya
+              houses. It remains the undeniable center of traditional Japanese culture, famous for formal
+              traditions such as kaiseki dining and geisha entertainers in the Gion district.
+            </p>
+            <Link
+              href="/plan"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-orange-400/60 text-orange-400 text-xs font-bold tracking-widest uppercase hover:bg-orange-500/10 transition-colors"
             >
-              <Plus className="w-5 h-5" /> Add to Itinerary
+              <span className="w-3 h-px bg-orange-400" />
+              UNESCO World Heritage Site
+            </Link>
+          </motion.div>
+
+          {/* Right: filter card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-[#0F172A]/90 backdrop-blur-xl border border-indigo-500/25 rounded-2xl p-5 shadow-2xl"
+          >
+            <p className="text-[10px] font-bold tracking-widest uppercase text-orange-400 mb-4">Explore Season</p>
+
+            {/* Season pills */}
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              {SEASONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSeason(s)}
+                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    season === s
+                      ? "bg-orange-500 text-white shadow-[0_0_12px_rgba(249,115,22,0.4)]"
+                      : "bg-[#1E293B] text-gray-400 hover:text-white hover:bg-[#334155]"
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            {/* Country dropdown */}
+            <div className="mb-3 relative">
+              <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2">Country</p>
+              <button
+                onClick={() => { setCountryOpen(v => !v); setSeasonOpen(false); }}
+                className="w-full flex items-center justify-between px-4 py-2.5 bg-[#1E293B] border border-indigo-500/20 rounded-xl text-sm font-medium text-white hover:border-orange-500/40 transition-colors"
+              >
+                {country}
+                <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${countryOpen ? "rotate-180" : ""}`} />
+              </button>
+              {countryOpen && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-[#1E293B] border border-indigo-500/20 rounded-xl overflow-hidden z-20 shadow-xl">
+                  {COUNTRIES.map(c => (
+                    <button key={c} onClick={() => { setCountry(c); setCountryOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${c === country ? "text-orange-400 bg-orange-500/10" : "text-gray-300 hover:bg-[#334155]"}`}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* When input */}
+            <div className="mb-5">
+              <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2">When</p>
+              <input
+                type="text"
+                placeholder="e.g. March 2025"
+                value={when}
+                onChange={e => setWhen(e.target.value)}
+                className="w-full px-4 py-2.5 bg-[#1E293B] border border-indigo-500/20 rounded-xl text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-orange-500/40 transition-colors"
+              />
+            </div>
+
+            <motion.button
+              onClick={() => router.push("/plan")}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 text-white text-sm font-bold shadow-[0_0_16px_rgba(249,115,22,0.35)] hover:shadow-[0_0_24px_rgba(249,115,22,0.5)] transition-all"
+            >
+              Explore Now
             </motion.button>
           </motion.div>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-[1200px] mx-auto px-6 mt-16 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-16">
-        
-        {/* Main Content */}
-        <main>
-          {/* Echoes of an Empire */}
-          <motion.section 
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="mb-20"
+      {/* ─── Curated Landmarks ─── */}
+      <section className="max-w-[1300px] mx-auto px-6 py-20">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-10">
+          <h2 className="text-4xl font-bold font-serif text-white mb-3">Curated Landmarks</h2>
+          <p className="text-gray-500 text-base">Iconic spiritual sites and historic districts that define the Kyoto experience.</p>
+        </motion.div>
+
+        {/* Masonry grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Large card - spans 2 rows */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 md:row-span-2 min-h-[280px]"
           >
-            <h2 className="text-3xl font-bold font-serif text-white mb-6">Echoes of an Empire</h2>
-            <p className="text-gray-400 text-lg leading-relaxed mb-8">
-              Serving as Japan's capital and the emperor's residence from 794 until 1868, Kyoto is a city of thousands of classical Buddhist temples, Shinto shrines, and traditional wooden machiya houses. It remains the undeniable center of traditional Japanese culture, famous for formal traditions such as kaiseki dining and geisha entertainers in the Gion district.
-            </p>
-            <div className="flex items-center gap-4 text-xs font-bold text-orange-400 tracking-widest uppercase bg-orange-950/30 w-max px-4 py-2 rounded-lg border border-orange-500/20">
-              <span className="w-4 h-px bg-orange-500" />
-              UNESCO WORLD HERITAGE SITE
-            </div>
-          </motion.section>
-
-          {/* Curated Landmarks */}
-          <section className="mb-20">
-            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-              <h2 className="text-4xl font-bold font-serif text-white mb-4">Curated Landmarks</h2>
-              <p className="text-indigo-200/50 mb-10 text-lg">Iconic spiritual sites and historic districts that define the Kyoto experience.</p>
-            </motion.div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Fushimi Inari */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                className="group relative rounded-3xl overflow-hidden aspect-[4/3] md:row-span-2 md:aspect-[3/4] cursor-pointer shadow-2xl border border-indigo-900/50"
-              >
-                <img src="https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&q=80&w=1000" alt="Fushimi Inari" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/90 via-[#0B0F19]/20 to-transparent" />
-                <div className="absolute bottom-8 inset-x-8 text-white">
-                  <span className="text-[10px] font-bold tracking-widest uppercase text-orange-400 mb-3 block">SHRINE</span>
-                  <h3 className="text-3xl font-bold font-serif mb-3">Fushimi Inari Taisha</h3>
-                  <p className="text-sm text-gray-300">Wander through seemingly endless vermilion torii gates that lead up the sacred Mount Inari.</p>
-                </div>
-              </motion.div>
-
-              {/* Kinkaku-ji */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-                className="group relative rounded-3xl overflow-hidden aspect-video cursor-pointer shadow-2xl border border-indigo-900/50"
-              >
-                <img src="https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?auto=format&fit=crop&q=80&w=1000" alt="Kinkaku-ji" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/90 via-[#0B0F19]/20 to-transparent" />
-                <div className="absolute bottom-6 inset-x-6 text-white">
-                  <h3 className="text-2xl font-bold font-serif mb-2">Kinkaku-ji</h3>
-                  <p className="text-xs text-gray-300 line-clamp-1">The legendary Golden Pavilion casting an shimmering reflection.</p>
-                </div>
-              </motion.div>
-
-              {/* Gion District */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                className="group relative rounded-3xl overflow-hidden aspect-video cursor-pointer shadow-2xl border border-indigo-900/50"
-              >
-                <img src="https://images.unsplash.com/photo-1542051812871-75f11100f723?auto=format&fit=crop&q=80&w=1000" alt="Gion" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/90 via-[#0B0F19]/20 to-transparent" />
-                <div className="absolute bottom-6 inset-x-6 text-white">
-                  <h3 className="text-2xl font-bold font-serif mb-2">Gion District</h3>
-                  <p className="text-xs text-gray-300 line-clamp-1">Step back in time in Kyoto's most famous geisha district.</p>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-
-        </main>
-
-        {/* Right Sidebar */}
-        <aside>
-          <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-            {/* When to Go Widget */}
-            <div className="bg-[#0F172A] rounded-3xl p-8 shadow-2xl border border-indigo-500/20 mb-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl" />
-              <div className="flex items-center gap-3 mb-8 relative z-10">
-                <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-orange-400" />
-                </div>
-                <h3 className="text-xl font-bold font-serif text-white">When to Go</h3>
-              </div>
-              
-              <div className="space-y-4 relative z-10">
-                <div className="bg-orange-500/10 p-4 rounded-2xl border border-orange-500/30 flex justify-between items-center shadow-inner">
-                  <span className="text-sm font-bold text-orange-100">Spring (Mar-May)</span>
-                  <span className="text-[10px] font-bold text-orange-300 bg-orange-950/50 px-3 py-1.5 rounded-full border border-orange-500/20">Recommended</span>
-                </div>
-                
-                <div className="bg-[#1E1B4B]/30 p-4 rounded-2xl border border-indigo-500/20 flex justify-between items-center">
-                  <span className="text-sm font-bold text-gray-300">Autumn (Sep-Nov)</span>
-                  <span className="text-[10px] font-bold text-gray-400 bg-indigo-950/50 px-3 py-1.5 rounded-full border border-indigo-500/20">Fall Foliage</span>
-                </div>
-                
-                <div className="bg-[#1E1B4B]/30 p-4 rounded-2xl border border-indigo-500/20 flex justify-between items-center">
-                  <span className="text-sm font-bold text-gray-300">Winter (Dec-Feb)</span>
-                  <span className="text-[10px] font-bold text-gray-400 bg-indigo-950/50 px-3 py-1.5 rounded-full border border-indigo-500/20">Quiet Temples</span>
-                </div>
-              </div>
+            <img src={LANDMARKS[0].img} alt={LANDMARKS[0].name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/95 via-[#0B0F19]/20 to-transparent" />
+            <div className="absolute bottom-7 left-7 right-7">
+              <span className="text-[9px] font-bold tracking-widest uppercase text-orange-400 mb-2 block">{LANDMARKS[0].type}</span>
+              <h3 className="text-2xl font-bold font-serif text-white mb-2">{LANDMARKS[0].name}</h3>
+              <p className="text-sm text-gray-400 line-clamp-2">{LANDMARKS[0].desc}</p>
             </div>
           </motion.div>
-        </aside>
 
-      </div>
+          {/* Two smaller cards */}
+          {LANDMARKS.slice(1).map((lm, i) => (
+            <motion.div
+              key={lm.id}
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i + 1) * 0.1 }}
+              className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/5 min-h-[160px] md:min-h-[180px]"
+            >
+              <img src={lm.img} alt={lm.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/95 via-[#0B0F19]/20 to-transparent" />
+              <div className="absolute bottom-5 left-5 right-5">
+                <span className="text-[9px] font-bold tracking-widest uppercase text-orange-400 mb-1.5 block">{lm.type}</span>
+                <h3 className="text-xl font-bold font-serif text-white mb-1">{lm.name}</h3>
+                <p className="text-xs text-gray-400 line-clamp-2">{lm.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Explore the Topography ─── */}
+      <section className="mx-6 mb-20 max-w-[1300px] lg:mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="relative rounded-3xl overflow-hidden bg-[#0F172A] border border-indigo-500/20 p-12 md:p-16 text-center shadow-2xl"
+        >
+          {/* Background glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.12)_0%,transparent_70%)]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl" />
+
+          <div className="relative z-10">
+            <div className="w-14 h-14 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto mb-6">
+              <Compass className="w-7 h-7 text-orange-400" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold font-serif text-white mb-4">Explore the Topography</h2>
+            <p className="text-gray-400 text-base max-w-lg mx-auto">
+              Interactive map detailing sacred routes, hidden teahouses, and exclusive guardian access points.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-indigo-500/15 bg-[#080C14]">
+        <div className="max-w-[1300px] mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+          {/* Brand */}
+          <div>
+            <p className="text-sm font-bold tracking-widest uppercase text-orange-400 mb-3">Tripora</p>
+            <p className="text-gray-500 text-sm leading-relaxed">
+              Curating ultra-global exploration for the discerning traveler. From hidden cities to private ateliers, we map the world's most extraordinary experiences.
+            </p>
+          </div>
+          {/* Destinations */}
+          <div>
+            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-4">Destinations</p>
+            <ul className="space-y-2.5">
+              {["Japan", "Scandinavia", "The Alps"].map(d => (
+                <li key={d}><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">{d}</Link></li>
+              ))}
+            </ul>
+          </div>
+          {/* Explore */}
+          <div>
+            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-4">Explore</p>
+            <ul className="space-y-2.5">
+              {["Heritage", "The Guardian", "Contact"].map(d => (
+                <li key={d}><Link href="#" className="text-sm text-gray-400 hover:text-white transition-colors">{d}</Link></li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="border-t border-white/5 py-4 text-center text-[11px] text-gray-600 tracking-wider">
+          © 2025 Tripora · All rights reserved
+        </div>
+      </footer>
     </div>
   );
 }
+

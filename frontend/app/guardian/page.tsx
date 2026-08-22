@@ -1,7 +1,7 @@
 import GuardianClient from "@/components/trek/GuardianClient";
 
 export const metadata = {
-  title: "Travel Guardian | Global Trotter",
+  title: "Travel Guardian | Tripora",
   description: "Travel confidently. We've got your back.",
 };
 

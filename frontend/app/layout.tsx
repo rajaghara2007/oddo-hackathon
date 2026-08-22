@@ -4,7 +4,7 @@ import Navbar from "@/components/trek/Navbar";
 import Footer from "@/components/trek/Footer";
 
 export const metadata: Metadata = {
-  title: "Global Trotter",
+  title: "Tripora",
   description: "Curate your extraordinary journey.",
 };
 
